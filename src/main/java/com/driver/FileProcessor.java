@@ -18,14 +18,30 @@ public class FileProcessor {
 
 	    public FileProcessor(List<String> fileNames) {
 	        // your code goes here
+			this.fileNames=fileNames;
 	    }
 
 	    public void processFiles() {
 	       // your code goes here
+			ExecutorService executor = Executors.newFixedThreadPool(fileNames.size());
+
+			for (String fileName : fileNames) {
+				executor.execute(new FileProcessorTask(fileName));
+			}
+
+			executor.shutdown();
+			try {
+				executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+			} catch (InterruptedException e) {
+				System.err.println("Error waiting for file processing to complete: " + e.getMessage());
+			}
 	    }
 
 	    public void displayWordCounts() {
 	        // your code goes here
+			for (String fileName : wordCounts.keySet()) {
+				System.out.println(fileName + "\t" + wordCounts.get(fileName) + " words");
+			}
 	    }
 	    
 
@@ -34,11 +50,28 @@ public class FileProcessor {
 
 	        public FileProcessorTask(String fileName) {
 	            // your code goes here
+				this.fileName=fileName;
 	        }
 
 	        public void run() {
 	            // your code goes here
+				int count = countWords(fileName);
+				wordCounts.put(fileName, count);
 	        }
+
+			private int countWords(String fileName) {
+				int count = 0;
+				try (BufferedReader br = new BufferedReader(new FileReader(fileName + ".txt"))) {
+					String line;
+					while ((line = br.readLine()) != null) {
+						String[] words = line.split("\\s+");
+						count += words.length;
+					}
+				} catch (IOException e) {
+					System.err.println("Error reading file " + fileName + ": " + e.getMessage());
+				}
+				return count;
+			}
 	    }
 
 	    public static void main(String[] args) {
