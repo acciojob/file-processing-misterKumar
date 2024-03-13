@@ -46,22 +46,20 @@ public class FileProcessor {
 	    
 
 	    private class FileProcessorTask implements Runnable {
-	        private String fileName;
+			private String fileName;
 
-	        public FileProcessorTask(String fileName) {
-	            // your code goes here
-				this.fileName=fileName;
-	        }
+			public FileProcessorTask(String fileName) {
+				this.fileName = fileName;
+			}
 
-	        public void run() {
-	            // your code goes here
+			public void run() {
 				int count = countWords(fileName);
 				wordCounts.put(fileName, count);
-	        }
+			}
 
 			private int countWords(String fileName) {
 				int count = 0;
-				try (BufferedReader br = new BufferedReader(new FileReader(fileName + ".txt"))) {
+				try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
 					String line;
 					while ((line = br.readLine()) != null) {
 						String[] words = line.split("\\s+");
@@ -75,10 +73,10 @@ public class FileProcessor {
 	    }
 
 	    public static void main(String[] args) {
-	    	List<String> fileNames = Arrays.asList("file1", "file2", "file3");
-	        FileProcessor fileProcessor = new FileProcessor(fileNames);
-	        fileProcessor.processFiles();
-	        fileProcessor.displayWordCounts();
+			List<String> fileNames = Arrays.asList("file1.txt", "file2.txt", "file3.txt");
+			FileProcessor fileProcessor = new FileProcessor(fileNames);
+			fileProcessor.processFiles();
+			fileProcessor.displayWordCounts();
 	    }
 	
 
